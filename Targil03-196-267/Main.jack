@@ -1,0 +1,20 @@
+/** Sarah Tordjman 327321196
+* Dvora Riterman 316503267
+* TickTackToe game 
+*/
+/**
+ * The Main class initializes a new game of TickTackToe and starts it.
+ */
+class Main {
+
+    /** Initializes a new game and starts it. */    
+    function void main() {
+        var TickTackToe game;
+
+        let game = TickTackToe.new();
+        do game.run();
+	do game.dispose();
+
+        return;
+    }
+}

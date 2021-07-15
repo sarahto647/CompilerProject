@@ -1,0 +1,360 @@
+/** Sarah Tordjman 327321196
+* Dvora Riterman 316503267
+* TickTackToe game 
+*/
+class TickTackToe
+{
+    field Array gameBoard;//array that describe the board of the game ((0,1,2),(3,4,5),(6,7,8)). (in the array- the value 9 = X and value 10 = O)
+    field int player;//
+    constructor TickTackToe new()
+    {//constructor of the game
+	    var int i;
+	    let player=1;
+	    let gameBoard=Array.new(9);
+	    let i=0;
+	    while (~(i=9))//fill the array of the board
+	    {
+    		let gameBoard[i]=i;
+		    let i=i+1;
+	    }
+	    do drawBoard();//function that draw the board lines
+		return this;
+    }
+    /** Deallocates the object's memory. */
+    method void dispose() 
+    {//destractur of the TicTocToe game
+		do gameBoard.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+    method void drawBoard()
+    {//this function draw the gameBoard lines
+	    do Screen.setColor(true);
+	    do Screen.drawLine(171,1,171,255);
+	    do Screen.drawLine(341,1,341,255);
+	    do Screen.drawLine(1,86,511,86);
+    	do Screen.drawLine(1,170,511,170);
+        return;
+    }
+    method int checkWin()//this function check if there is winner to the game(by check the values in gameBoard array)
+    { 
+	    //Winning Condition For First Row 
+	    if ((gameBoard[0] = gameBoard[1]) & (gameBoard[1] = gameBoard[2]))
+	    {
+	    	return 1;
+    	}
+    	//Winning Condition For Second Row
+    	if ((gameBoard[3] = gameBoard[4]) & (gameBoard[4] = gameBoard[5]))
+    	{
+	    	return 1;
+    	}
+    	//Winning Condition For Third Row   
+    	if ((gameBoard[6] = gameBoard[7]) & (gameBoard[7] = gameBoard[8]))
+        {
+    		return 1;
+    	}
+
+    	//Winning Condition For First Column       
+    	if ((gameBoard[0] = gameBoard[3]) & (gameBoard[3] = gameBoard[6]))
+    	{
+    		return 1;
+    	}
+    	//Winning Condition For Second Column  
+    	if ((gameBoard[1] = gameBoard[4]) & (gameBoard[4] = gameBoard[7]))
+    	{
+    		return 1;
+    	}
+    	//Winning Condition For Third Column  
+    	if ((gameBoard[2] = gameBoard[5]) & (gameBoard[5] = gameBoard[8]))
+    	{
+    		return 1;
+    	}
+    	//First Diagonal Winning Condition
+    	if ((gameBoard[0] = gameBoard[4]) & (gameBoard[4] = gameBoard[8]))
+    	{
+    		return 1;
+    	}
+    	//Second Diagonal Winning Condition
+    	if ((gameBoard[2] = gameBoard[4]) & (gameBoard[4] = gameBoard[6]))
+    	{
+         return 1;
+	    }
+	    //Draw Condition
+	    if ((~(gameBoard[0]=0)) & (~(gameBoard[1]=1)) & (~(gameBoard[2]=2)) & (~(gameBoard[3]=3)) & (~(gameBoard[4]=4)) & (~(gameBoard[5]=5)) & (~(gameBoard[6] =6)) & (~(gameBoard[7] =7)) & (~(gameBoard[8] =8)))
+        {
+	    	return -1;
+        }
+	    else//No one win right now
+	    {
+	        return 0;
+    	}
+    }
+    method void run()//this function manage the progress of the game
+	{	
+		var int choice;//where on the board the player want to put his sign(X or O)-from 0 to 8
+		var int flag;//the result of checkWin
+		 var int i;
+		let flag=checkWin();
+		while ((~(flag = 1)) & (~(flag = -1)))// This loop will be run until all cell of the grid is not marked with X and O or some player is not win
+		{
+			let choice=getChoice();
+		    // checking that position where user want to run is marked (with X or O) or not  
+			if ((~(gameBoard[choice] = 9)) & (~(gameBoard[choice] = 10)))//if the player chose a empty square
+				{
+					if (player=1) //if the player is of X
+					{
+						let gameBoard[choice] = 9;
+						let player=2;
+						do drawX(choice);
+					}
+                    else //if the player is of O
+                    {
+						let gameBoard[choice] = 10;
+						let player=1;
+						do drawCircle(choice);
+                    }
+				let flag = checkWin();// calling of check win  
+                }
+            else //If there is any possition where user want to run and that is already marked then show message
+            {
+			    do Output.moveCursor(0,0);
+                do Output.printString(" Sorry! your choice is already marked");//will show for 8 seconds
+				do Output.println();
+				do Sys.wait(8000);
+				do Output.moveCursor(0,0);
+				do Output.printString("                                      ");
+				do Output.println();
+				do Output.moveCursor(0,0);
+				do Screen.setColor(true);//fix the line of the game board
+				do Screen.drawLine(171,1,171,20);
+					
+            }	
+         }   
+		if (flag = 1)// if flag value is 1 then some one has win
+        {
+			do Output.moveCursor(0,0);
+			do Output.printString("Player ");
+			if(player=2)
+				{
+					do Output.printInt(1);
+				}
+			else
+				{
+					do Output.printInt(2);
+				}
+			do Output.printString(" has won");
+			do Output.println();
+        }
+        else// if flag value is -1 the match will be draw and no one is winner
+		{
+			do Output.printString("It's a Draw!");
+		}
+	    return;
+    }
+
+    method int getChoice()//this function get choice from the player by click on space in some place in the game board
+	{
+		
+		var int choice;//player choice
+		var char key;
+		let choice=0;
+		do drawCursor(choice,true);//the sign that show on which square in the game board we are now
+		while (true) 
+        {//while the player did not enter space
+            // waits for a key to be pressed.
+            while (key = 0) 
+            {
+                let key = Keyboard.keyPressed();
+            }
+
+			if(key=32)//space
+			{
+				do drawCursor(choice,false);
+				do Sys.wait(1000);
+				return choice;
+			}
+            if (key = 131)//up
+            {
+                if ((~(choice=0)) & (~(choice=1)) & (~(choice=2)))//if there is option to go up
+				{
+					//delete the old cursor and draw the new one
+					do drawCursor(choice,false);
+					let choice=choice-3;
+					do drawCursor(choice,true);
+				}
+            }
+            if (key = 133) //down
+            {
+                if ((~(choice=6)) & (~(choice=7)) & (~(choice=8)))//if there is option to go down
+				{
+					//delete the old cursor and draw the new one
+					do drawCursor(choice,false);
+					let choice=choice+3;
+					do drawCursor(choice,true);
+				}
+            }
+            if (key = 130) //left
+            {
+                if ((~(choice=0)) & (~(choice=3)) & (~(choice=6)))//if there is option to go left
+				{
+					//delete the old cursor and draw the new one
+					do drawCursor(choice,false);
+					let choice=choice-1;
+					do drawCursor(choice,true);
+				}
+            }
+            if (key = 132) //right
+            {
+                if ((~(choice=2)) & (~(choice=5)) & (~(choice=8)))//if there is option to go right
+				{
+					//delete the old cursor and draw the new one
+					do drawCursor(choice,false);
+					let choice=choice+1;
+					do drawCursor(choice,true);
+				}
+            }
+			// waits for the key to be released.
+            while (~(key = 0)) 
+            {
+                let key = Keyboard.keyPressed();
+				do Sys.wait(1000); // Delays the next movement.
+				let key=0;
+            }
+        }
+		return 0;
+	}
+
+method void drawCursor(int choice,boolean toDraw)//this function get the player choice and draw it on the game board in color the define by toDraw(delete old cursor or draw the new one).
+	{
+		do Screen.setColor(toDraw);
+		if(choice=0)
+		{
+			do Screen.drawLine(30,15,30,71);
+		}
+		if(choice=1)
+		{
+			do Screen.drawLine(201,15,201,71);
+		}
+		if(choice=2)
+		{
+			do Screen.drawLine(371,15,371,71);
+		}
+		if(choice=3)
+		{
+			do Screen.drawLine(30,101,30,155);
+		}
+		if(choice=4)
+		{
+			do Screen.drawLine(201,101,201,155);
+		}
+		if(choice=5)
+		{
+			do Screen.drawLine(371,101,371,155);
+		}
+		if(choice=6)
+		{
+			do Screen.drawLine(30,185,30,241);
+		}
+		if(choice=7)
+		{
+			do Screen.drawLine(201,185,201,241);
+		}
+		if(choice=8)
+		{
+			do Screen.drawLine(371,185,371,241);
+		}
+		return;	
+	}
+
+    method void drawX(int choice)//this function get the player 1 choice and draw X there.
+    {
+    	do Screen.setColor(true);//black
+		if(choice=0)
+		{
+			do Screen.drawLine(70,28,100,58);
+			do Screen.drawLine(100,28,70,58);
+		}
+		if(choice=1)
+		{
+			do Screen.drawLine(241,28,271,58);
+			do Screen.drawLine(271,28,241,58);
+		}
+		if(choice=2)
+		{
+			do Screen.drawLine(412,28,442,58);
+			do Screen.drawLine(442,28,412,58);
+		}
+		if(choice=3)
+		{
+			do Screen.drawLine(70,114,100,144);
+			do Screen.drawLine(100,114,70,144);
+		}
+		if(choice=4)
+		{
+			do Screen.drawLine(241,114,271,144);
+			do Screen.drawLine(271,114,241,144);
+		}
+		if(choice=5)
+		{
+			do Screen.drawLine(412,114,442,144);
+		    do Screen.drawLine(442,114,412,144);
+		}
+		if(choice=6)
+		{
+			do Screen.drawLine(70,200,100,230);
+			do Screen.drawLine(100,200,70,230);
+		}
+		if(choice=7)
+		{
+			do Screen.drawLine(241,200,271,230);
+			do Screen.drawLine(271,200,241,230);
+		}
+		if(choice=8)
+		{
+			do Screen.drawLine(412,200,442,230);
+			do Screen.drawLine(442,200,412,230);
+		}
+		return;
+    }
+    method void drawCircle(int choice)//this function get the player 2 choice and draw O there.
+    {
+    	do Screen.setColor(true);//black
+		if(choice=0)
+		{
+			do Screen.drawCircle(85,43,20);
+		}
+		if(choice=1)
+		{
+			do Screen.drawCircle(256,43,20);
+		}
+		if(choice=2)
+		{
+			do Screen.drawCircle(427,43,20);
+		}
+		if(choice=3)
+		{
+			do Screen.drawCircle(85,128,20);
+		}
+		if(choice=4)
+		{
+			do Screen.drawCircle(256,128,20);
+		}
+		if(choice=5)
+		{
+			do Screen.drawCircle(427,128,20);
+		}
+		if(choice=6)
+		{
+			do Screen.drawCircle(85,213,20);
+		}
+		if(choice=7)
+		{
+			do Screen.drawCircle(256,213,20);
+		}
+		if(choice=8)
+		{
+			do Screen.drawCircle(427,213,20);
+		}
+		return;
+    }
+}
